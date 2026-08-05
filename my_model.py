@@ -4,107 +4,179 @@ import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
 
+# -----------------------------
+# Load the trained model
+# -----------------------------
 model = keras.models.load_model("digit_model.keras")
 
+# -----------------------------
+# Title
+# -----------------------------
 st.title("🧠 Handwritten Digit Recognition")
+st.write("Upload a 28×28 handwritten digit and let the neural network predict it!")
 
+# -----------------------------
+# Upload Image
+# -----------------------------
 uploaded_file = st.file_uploader(
-    "Upload a handwritten digit",
-    type=["png","jpg","jpeg"]
+    "Choose an image",
+    type=["png", "jpg", "jpeg"]
 )
 
-from PIL import Image
-                                                                                            # Extracting pixels from the image 
-img = Image.open("uploaded_file").convert("L")                                              # .convert("L") to convert the image in to two colours black and white
+# -----------------------------
+# Softmax (Your own implementation)
+# -----------------------------
+def softmax(logits):
 
-x_input = np.array(img)
+    new_logits = logits - np.max(logits)
 
-x_input = x_input.astype(np.float32) / 255.0
-x_input = x_input.reshape(1,784)
+    m = logits.shape[1]
 
+    probabilities = np.zeros(m)
 
-def softmax(prediction_final_logits):
+    exp_values = np.zeros(m)
 
-    new_logits = prediction_final_logits - np.max(prediction_final_logits)
-
-    m=prediction_final_logits.shape[1]
-    prob_array = np.zeros(m)
-    logits_sum=0
-    logits_exp=np.zeros(m)
-    for i in range(m):
-
-        exp_ = np.exp(new_logits[0,i])
-        logits_exp[i] = exp_
-
-        logits_sum += exp_
+    exp_sum = 0
 
     for i in range(m):
-        prob_array[i] = logits_exp[i]/logits_sum
 
-    
+        exp_values[i] = np.exp(new_logits[0, i])
 
-    return prob_array 
+        exp_sum += exp_values[i]
 
+    for i in range(m):
 
+        probabilities[i] = exp_values[i] / exp_sum
 
-if st.button("Predict"):
-    prediction = model.predict(x_input)
-    prediction_final = np.argmax(prediction, axis=1)
+    return probabilities
 
-    probabilities = softmax(prediction)
+# -----------------------------
+# Prediction
+# -----------------------------
+if uploaded_file is not None:
 
-    st.success(f"Predicted Digit is : {prediction_final}")
+    # Read image
+    img = Image.open(uploaded_file).convert("L")
 
-    fig, ax = plt.subplots(figsize=(7,4))
+    # Resize just in case
+    img = img.resize((28,28))
 
-    ax.bar(
-        range(10),
-        probabilities.flatten()*100
-    )
+    # Display uploaded image
+    st.image(img, caption="Uploaded Image", width=180)
 
-    ax.set_xlabel("Digits")
+    # Convert to numpy
+    x_input = np.array(img)
 
-    ax.set_ylabel("Confidence (%)")
+    # Normalize
+    x_input = x_input.astype(np.float32)/255.0
 
-    ax.set_title("Confidence Scores")
+    # Uncomment this if your uploaded digits are BLACK on WHITE
+    # x_input = 1 - x_input
 
-    st.pyplot(fig)
+    # Reshape
+    x_input = x_input.reshape(1,784)
 
-    fig, ax = plt.subplots(figsize=(7,4))
+    if st.button("Predict"):
 
-    ax.bar(
-        range(10),
-        prediction.flatten()
-    )
+        logits = model.predict(x_input)
 
-    ax.set_title("Raw Logits")
+        probabilities = softmax(logits)
 
-    st.pyplot(fig)
+        prediction = np.argmax(logits)
 
+        confidence = probabilities[prediction]*100
+
+        st.success(f"Predicted Digit : {prediction}")
+
+        st.write(f"Model Confidence : **{confidence:.2f}%**")
+
+        st.write("---")
+
+        st.subheader("Confidence for each digit")
+
+        for i in range(10):
+
+            st.write(f"Digit {i} : {probabilities[i]*100:.6f}%")
+
+        # -----------------------------
+        # Confidence Graph
+        # -----------------------------
+        fig, ax = plt.subplots(figsize=(8,4))
+
+        colors = ["steelblue"]*10
+        colors[prediction] = "orange"
+
+        ax.bar(range(10),
+               probabilities*100,
+               color=colors)
+
+        ax.set_xlabel("Digits")
+
+        ax.set_ylabel("Confidence (%)")
+
+        ax.set_title("Prediction Confidence")
+
+        ax.set_xticks(range(10))
+
+        st.pyplot(fig)
+
+        # -----------------------------
+        # Raw Logits
+        # -----------------------------
+        fig2, ax2 = plt.subplots(figsize=(8,4))
+
+        colors = ["steelblue"]*10
+        colors[prediction] = "orange"
+
+        ax2.bar(range(10),
+                logits.flatten(),
+                color=colors)
+
+        ax2.set_xlabel("Digits")
+
+        ax2.set_ylabel("Logits")
+
+        ax2.set_title("Raw Logits Produced by the Neural Network")
+
+        ax2.set_xticks(range(10))
+
+        st.pyplot(fig2)
+
+# -----------------------------
+# Sidebar
+# -----------------------------
 with st.sidebar:
 
-    st.header("Model Details")
+    st.header("📌 Model Details")
 
-    st.write("Architecture")
+    st.write("**Architecture**")
 
-    st.write("784 → 250 →100 →10")
+    st.write("784 → 250 → 100 → 10")
 
-    st.write("Activation : ReLU")
+    st.write("**Activation**")
 
-    st.write("Regularization : L2")
+    st.write("ReLU")
 
-    st.write("Optimal λ : 0.00001")
+    st.write("**Output Layer**")
 
-with st.sidebar:
+    st.write("Linear (Logits)")
 
-    st.header("Model Details")
+    st.write("**Loss Function**")
 
-    st.write("Architecture")
+    st.write("Sparse Categorical Crossentropy")
 
-    st.write("784 → 250 →100 →10")
+    st.write("**Optimizer**")
 
-    st.write("Activation : ReLU")
+    st.write("Adam")
 
-    st.write("Regularization : L2")
+    st.write("**Regularization**")
 
-    st.write("Optimal λ : 0.00001")
+    st.write("L2")
+
+    st.write("**Optimal λ**")
+
+    st.write("0.00001")
+
+    st.write("**Dataset**")
+
+    st.write("MNIST")
