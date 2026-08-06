@@ -9,6 +9,8 @@
 
 ## 📖 About the Project
 
+# Link for our deployed model : https://handwritten-digit-recognition-dnn-w4rxvt5hetzlngad9bmbrf.streamlit.app/
+
 This project was built to understand **how Deep Neural Networks actually learn**, rather than simply training a model and reporting its accuracy.
 
 Instead of stopping after creating a classifier, I explored the complete model development process by experimenting with different neural network architectures, analyzing overfitting, applying L2 regularization, tuning hyperparameters, and evaluating how each decision affected the model's ability to generalize.
