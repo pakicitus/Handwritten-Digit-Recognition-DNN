@@ -1,6 +1,6 @@
 import streamlit as st
 import numpy as np
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 from PIL import Image
 from tensorflow import keras
 from streamlit_drawable_canvas import st_canvas
@@ -128,61 +128,61 @@ if st.button("Predict"):
         # Confidence Graph
         # ======================================
 
-        # fig, ax = plt.subplots(figsize=(8,4))
+        fig, ax = plt.subplots(figsize=(8,4))
 
-        # colors = ["steelblue"]*10
+        colors = ["steelblue"]*10
 
-        # colors[prediction]="orange"
+        colors[prediction]="orange"
 
-        # ax.bar(
+        ax.bar(
 
-        #     range(10),
+            range(10),
 
-        #     probabilities*100,
+            probabilities*100,
 
-        #     color=colors
+            color=colors
 
-        # )
+        )
 
-        # ax.set_xticks(range(10))
+        ax.set_xticks(range(10))
 
-        # ax.set_xlabel("Digits")
+        ax.set_xlabel("Digits")
 
-        # ax.set_ylabel("Confidence (%)")
+        ax.set_ylabel("Confidence (%)")
 
-        # ax.set_title("Prediction Confidence")
+        ax.set_title("Prediction Confidence")
 
-        # st.pyplot(fig)
+        st.pyplot(fig)
 
-        # # ======================================
-        # # Raw Logits Graph
-        # # ======================================
+        # ======================================
+        # Raw Logits Graph
+        # ======================================
 
-        # fig2, ax2 = plt.subplots(figsize=(8,4))
+        fig2, ax2 = plt.subplots(figsize=(8,4))
 
-        # colors = ["steelblue"]*10
+        colors = ["steelblue"]*10
 
-        # colors[prediction]="orange"
+        colors[prediction]="orange"
 
-        # ax2.bar(
+        ax2.bar(
 
-        #     range(10),
+            range(10),
 
-        #     prediction_logits.flatten(),
+            prediction_logits.flatten(),
 
-        #     color=colors
+            color=colors
 
-        # )
+        )
 
-        # ax2.set_xticks(range(10))
+        ax2.set_xticks(range(10))
 
-        # ax2.set_xlabel("Digits")
+        ax2.set_xlabel("Digits")
 
-        # ax2.set_ylabel("Logits")
+        ax2.set_ylabel("Logits")
 
-        # ax2.set_title("Raw Logits Produced by the Neural Network")
+        ax2.set_title("Raw Logits Produced by the Neural Network")
 
-        # st.pyplot(fig2)
+        st.pyplot(fig2)
 
 
 # ==========================================
