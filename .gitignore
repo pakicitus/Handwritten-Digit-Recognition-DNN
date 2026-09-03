@@ -1,23 +1,43 @@
-# Virtual Environment
-.venv/
-venv/
-
-# Python Cache
+# Python bytecode and caches
 __pycache__/
 *.py[cod]
+*$py.class
 
-# Jupyter Notebook Checkpoints
-.ipynb_checkpoints/
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
 
-# VS Code
+# IDE and editor settings
+.idea/
 .vscode/
 
-# PyCharm
-.idea/
+# Jupyter checkpoints
+.ipynb_checkpoints/
 
-# Operating System Files
+# Test, coverage, and build output
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# Operating-system files and temporary logs
 .DS_Store
 Thumbs.db
-
-# Temporary files
 *.log
+
+# Local training data (not needed by the deployed app)
+train-images.idx3-ubyte
+train-labels.idx1-ubyte
+t10k-images.idx3-ubyte
+t10k-labels.idx1-ubyte
